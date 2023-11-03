@@ -1,0 +1,35 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Main {
+    static int[] dp;
+    static int[] temp;
+    public static void main(String[] args) throws IOException {
+
+        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st=new StringTokenizer(br.readLine());
+        int N= Integer.parseInt(st.nextToken());
+        int K= Integer.parseInt(st.nextToken());
+        temp=new int[N];
+        dp=new int[K+1];
+        for(int i=0; i<N; i++){
+            st=new StringTokenizer(br.readLine());
+            temp[i]= Integer.parseInt(st.nextToken());
+        }
+        Arrays.sort(temp);
+        int ads=0;
+        while(ads<=K){
+            dp[ads]=1;
+            ads+=temp[0];
+        }
+        for(int i=1; i<N; i++){
+            for(int j=temp[i]; j<=K; j++){
+                dp[j]+=dp[j-temp[i]];
+            }
+        }
+        System.out.println(dp[K]);
+    }
+
+}
