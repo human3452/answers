@@ -5,8 +5,9 @@ import java.util.*;
 
 public class Main {
     static class gifticon implements Comparable<gifticon>{
-        int deadline, plan;
-        gifticon(int b){
+        int plan;
+        long deadline;
+        gifticon(long b){
             deadline=b;
         }
         public void setPlan(int c){
@@ -14,53 +15,53 @@ public class Main {
         }
         @Override
         public int compareTo(gifticon o) {
-            return this.plan-o.plan;
+            if(this.plan==o.plan)
+            return (int) (this.deadline-o.deadline);
+            else return this.plan-o.plan;
         }
     }
     public static void main(String[] args) throws IOException {
         BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st=new StringTokenizer(br.readLine());
         PriorityQueue<gifticon> pq=new PriorityQueue<>();
-        PriorityQueue<gifticon> pq2=new PriorityQueue<>(new Comparator<gifticon>() {
-            @Override
-            public int compare(gifticon o1, gifticon o2) {
-                if (o1.deadline==o2.deadline){
-                    return o1.plan-o2.plan;
-                }else {
-                    return o1.deadline-o2.deadline;
-                }
-            }
-        });
         int N= Integer.parseInt(st.nextToken());
         st=new StringTokenizer(br.readLine());
         gifticon[] gt=new gifticon[N];
+        HashMap<Integer, Integer> map=new HashMap<>();
         for(int i=0; i<N; i++){
             gt[i]=new gifticon(Integer.parseInt(st.nextToken()));
         }
 
         st=new StringTokenizer(br.readLine());
         long answer=0;
-        for(int i=0; i<N; i++){
-            gt[i].setPlan(Integer.parseInt(st.nextToken()));
-            if(gt[i].plan>gt[i].deadline){
-                int temp= (int) Math.ceil((double) (gt[i].plan-gt[i].deadline)/30.0);
-                gt[i].deadline+=temp*30;
-                answer+=temp;
-            }
-            pq.add(gt[i]);
-            pq2.add(gt[i]);
-        }
-        while(!pq.isEmpty()){
-            gifticon base=pq.poll();
-            gifticon compare=pq2.poll();
-            while(base.plan<compare.plan){
-                compare.deadline+=30;
-                pq2.add(compare);
-                answer++;
-                compare=pq2.poll();
-            }
-        }
 
+        for(int i=0; i<N; i++){
+            int plan=Integer.parseInt(st.nextToken());
+            if(map.containsKey(plan)){
+                map.put(plan, map.get(plan)+1);
+            }else{
+                map.put(plan, 1);
+            }
+            gt[i].setPlan(plan);
+            pq.add(gt[i]);
+        }
+        long max=0;
+        gifticon base;
+        while(!pq.isEmpty()){
+            base=pq.peek();
+            max=Math.max(max,base.plan);
+            long tempmax=max;
+            for(int i=0; i<map.get(base.plan); i++){
+                base=pq.poll();
+                if(base.deadline<max){
+                    int temp= (int) Math.ceil((double)(max-base.deadline)/30.0);
+                    answer+=temp;
+                    base.deadline+=temp*30;
+                }
+                tempmax=Math.max(base.deadline, tempmax);
+            }
+            max=tempmax;
+        }
         System.out.println(answer);
     }
 }
