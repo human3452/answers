@@ -10,7 +10,12 @@ public class Main {
          String temp=br.readLine();
          long answer=0;
          for(int i=0; i<N; i++){
-             answer+= (temp.charAt(i)-'a'+1)*Math.pow(31,i);
+             long a=temp.charAt(i)-'a'+1;
+             for(int j=0; j<i; j++){
+                 a=(a*31)%1234567891;
+             }
+             answer+=a;
+             answer%=1234567891;
         }
          System.out.print(answer%1234567891);
     }
