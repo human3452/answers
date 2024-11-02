@@ -43,6 +43,9 @@ public class Main {
 
     static int find(int a){
         if(p[a]==a) return a;
-        else return find(p[a]);
+        else {
+            p[a]=find(p[a]);
+            return find(p[a]);
+        }
     }
 }
