@@ -1,59 +1,74 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
+import java.io.*;
 import java.util.*;
 
-public class Main  {
-    static int[][] dp;
-    static int[] num;
+
+public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw=new BufferedWriter(new OutputStreamWriter(System.out));
+        int N= Integer.parseInt(br.readLine());
+        int[] array=new int[N];
         StringTokenizer st=new StringTokenizer(br.readLine());
-        int N= Integer.parseInt(st.nextToken());
-        st=new StringTokenizer(br.readLine());
-        num=new int[N];
-        dp=new int[N][2];
-        for(int i=0; i<N; i++){
-            num[i]= Integer.parseInt(st.nextToken());
-            dp[i][1]=-1;
-        }
-        dp[0][0]=1;
-        int answer=1;
-        int answerpointer=-1;
-        for(int i=1; i<N; i++){
-            int pointer=-1;
-            int max=0;
-            boolean flag=false;
-            for(int j=i-1; j>=0; j--){
-               if(num[i]>num[j]){
-                   if(max<dp[j][0]){
-                       pointer=j;
-                       max=dp[j][0];
-                       flag=true;
-                   }
-               }
-               dp[i][1] = pointer;
-               dp[i][0] = max + 1;
+        for(int i=0; i<N; i++) array[i]= Integer.parseInt(st.nextToken());
+        int[] record=new int[N];
+        ArrayList<Integer> test=new ArrayList<>();
+        int pointer=0;
+        test.add(array[0]);
+        record[0]=0;
+        outer:for(int i=1; i<N; i++){
+            if(array[i]<=test.get(0)){
+                record[i]=0;
+                test.set(0, array[i]);
+            }else if(array[i]>=test.get(pointer)){
+                if(array[i]==test.get(pointer)){
+                    record[i]=pointer;
+                }else {
+                    pointer++;
+                    test.add(array[i]);
+                    record[i] = pointer;
+                }
+            }else{
+                int start=0;
+                int end=pointer;
+                while(start<end){
+                    int middle=(start+end)/2;
+                    if(test.get(middle)==array[i]){
+                        test.set(middle, array[i]);
+                        record[i]=middle;
+                        continue outer;
+                    }
+                    if((test.get(middle)<array[i] && test.get(middle+1)>array[i])){
+                        test.set(middle+1, array[i]);
+                        record[i]=middle+1;
+                        continue outer;
+                    }
+                    if(test.get(middle)<array[i]){
+                        start=middle+1;
+                    }else{
+                        end=middle-1;
+                    }
+                }
+                if(test.get(start)==array[i]){
+                    record[i]=start;
+                }else {
+                    record[i] = start + 1;
+                    test.set(start + 1, array[i]);
+                }
             }
-            if(answer<dp[i][0]){
-                answer=dp[i][0];
-                answerpointer=i;
+        }
+        bw.write(test.size()+"\n");
+        int ai=N-1;
+        while(pointer>=0){
+            if(record[ai]==pointer){
+                test.set(pointer, array[ai]);
+                pointer--;
             }
+            ai--;
         }
-        System.out.println(answer);
-        Stack<Integer> stack=new Stack<>();
-        while(answerpointer>=0){
-            stack.add(num[answerpointer]);
-            answerpointer=dp[answerpointer][1];
-        }
-        if(stack.isEmpty()){
-            System.out.println(num[0]);
-        }else {
-            while (stack.size() != 1) System.out.print(stack.pop() + " ");
-            System.out.print(stack.pop());
-        }
+        for(int i=0; i<test.size()-1; i++) bw.write(test.get(i)+" ");
+        bw.write(test.get(test.size()-1)+"");
+        bw.flush();
+        bw.close();
+        br.close();
     }
-
-
 }
