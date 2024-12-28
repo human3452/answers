@@ -3,7 +3,7 @@ class Solution {
     static final int[] dx={-1, 0, 1, 0};
     static final int[] dy={0, -1, 0, 1};
     public int solution(int[][] land) {
-        int answer = 0;
+        int answer = 3;
         ArrayList<Integer> list=new ArrayList<>();
         list.add(0);
         list.add(0);
